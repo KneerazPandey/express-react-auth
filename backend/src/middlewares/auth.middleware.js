@@ -32,6 +32,19 @@ export const isAuthenticatedMiddleware = expressAsyncHandler(async (req, res, ne
         
         next();
     }catch(error) {
-        return res.status(200).json({message: 'Not authorized, please login!'});
+        return res.status(401).json({message: 'Not authorized, please login!'});
+    }
+});
+
+
+
+export const isAdminMiddleware = expressAsyncHandler(async (req, res, next) => {
+    try{
+        if (req.user && req.user.role == 'admin') {
+            return next();
+        }
+        return res.status(403).json({message: `You don't have admin permission`});
+    }catch(error) {
+        return res.status(403).json({message: `You don't have admin permission`});
     }
 });

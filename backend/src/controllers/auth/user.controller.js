@@ -123,7 +123,7 @@ export const updateUserProfile = expressAsyncHandlder(async (req, res) => {
 
         const updatedUser = await user.save();
         return res.status(200).json(updatedUser);
-        
+
     }catch(error) {
         return res.status(404).json({message: 'Unable to find profile details'});
     }
