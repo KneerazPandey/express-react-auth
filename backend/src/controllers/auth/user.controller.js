@@ -95,3 +95,14 @@ export const logoutUser = expressAsyncHandlder(async (req, res) => {
 
     return res.status(200).json({message: 'User logged out'});
 });
+
+
+export const getUserProfile = expressAsyncHandlder(async (req, res) => {
+    try {
+        const id = req.user._id;
+        const user = await User.findById(id).select('-password');
+        return res.status(200).json(user);
+    }catch(error) {
+        return res.status(404).json({message: 'Unable to find profile details'});
+    }
+});
