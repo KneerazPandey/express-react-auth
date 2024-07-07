@@ -106,3 +106,25 @@ export const getUserProfile = expressAsyncHandlder(async (req, res) => {
         return res.status(404).json({message: 'Unable to find profile details'});
     }
 });
+
+
+export const updateUserProfile = expressAsyncHandlder(async (req, res) => {
+    try {
+        const id = req.user._id;
+        const user = await User.findById(id);
+
+        // user properties to update
+        const { name, bio, photo } = req.body;
+
+        // updating the user properties
+        user.name = name || user.name; 
+        user.bio = bio || user.bio;
+        user.photo = photo || user.photo;
+
+        const updatedUser = await user.save();
+        return res.status(200).json(updatedUser);
+        
+    }catch(error) {
+        return res.status(404).json({message: 'Unable to find profile details'});
+    }
+});
