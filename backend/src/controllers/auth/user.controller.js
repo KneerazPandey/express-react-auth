@@ -1,5 +1,6 @@
 import expressAsyncHandlder from 'express-async-handler';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 import User from '../../models/auth/user.model.js';
 import generateToken from '../../helpers/token.js';
@@ -127,4 +128,30 @@ export const updateUserProfile = expressAsyncHandlder(async (req, res) => {
     }catch(error) {
         return res.status(404).json({message: 'Unable to find profile details'});
     }
+});
+
+
+export const userLoginStatus = expressAsyncHandlder(async (req, res) => {
+    try {
+        const authorizationToken = req.headers.authorization;
+        if (!authorizationToken) {
+            return res.status(401).json({message: "Not authorize, please login!"});
+        }
+        const bearerToken = authorizationToken.split(" ");
+        if (bearerToken.length !== 2 || bearerToken[0] !== 'Bearer') {
+            return res.status(401).json({message: "Not authorize, please login!"});
+        }
+        
+        const token = bearerToken[1];
+        console.log(token);
+        const decoded = await jwt.verify(token, process.env.SECRET_KEY);
+        const user = User.findById(decoded.id).select('-password');
+        if (!user) {
+            return res.status(401).json({message: "Not authorize, please login!"});
+        }
+        return res.status(200).json(true);
+    }catch(error) {
+        return res.status(200).json(false);
+    }
+
 });
